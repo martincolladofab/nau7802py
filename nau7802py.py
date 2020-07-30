@@ -258,13 +258,11 @@ class NAU7802():
         # Prevent the current reading from being less than zero offset
         # This happens when the scale is zero'd, unloaded, and the load cell reports a value slightly less than zero value
         # causing the weight to be negative or jump to millions of pounds
-        if not allowNegativeWeights:
-            if onScale < self.zeroOffset:
-                onScale = self.zeroOffset    # Force reading to zero
+        if not allowNegativeWeights and onScale < self.zeroOffset:
+            onScale = self.zeroOffset    # Force reading to zero
 
         try:
-            weight = (onScale - self.zeroOffset) / self.calibrationFactor
-            return weight
+            return (onScale - self.zeroOffset) / self.calibrationFactor
         except:
             print('Needs calibrating')
             return False
@@ -398,6 +396,4 @@ class NAU7802():
             time.sleep(0.001)
             cal_ready = self.calAFEStatus()
 
-        if cal_ready == NAU7802_Cal_Status['NAU7802_CAL_SUCCESS']:
-            return True
-        return False
+        return cal_ready == NAU7802_Cal_Status['NAU7802_CAL_SUCCESS']
